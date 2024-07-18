@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-advanced-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-advanced-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-advanced-app
+    spec:
+      containers:
+      - name: nodejs-advanced-app
+        image: nensiravaliya28/nodejs-advanced-app:v2
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: PORT
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: redis-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: redis-config
+              key: REDIS_PORT
+        - name: NODE_ENV
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: NODE_ENV
+      - name: redis
+        image: redis:latest
+        ports:
+        - containerPort: 6379
+
